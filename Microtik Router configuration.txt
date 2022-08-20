@@ -1,0 +1,85 @@
+Winbox: Neighbours> admin-password blank. Connect
+
+Interface List:                      RX= WAN, TX=LAN
+Name_ISP : ether1_ISP/WAN
+Name_LAN :
+
+IP Address for Head Office Mikrotik
+WAN IP : 192.168.111.10/24                 192.168.111.7/24
+Gate Way : 192.168.111.1 
+DNS : 8.8.8.8 
+Alter DNS: 8.8.4.4
+
+Local Area Network IP Address:
+10.10.10.1/24
+
+
+
+1st: Address List> + > 192.168.111.10/24, name_ISP > apply
+    + >10.10.10.1/24, name_LAN > apply
+
+2nd: IP> DNS Settings> 8.8.8.8,8.8.4.4 > apply
+
+3rd: IP> Route List > + > Gate Way : 192.168.111.1> reachable ether2_ISP > apply           192.168.000.1
+
+4th: IP> Firewall > NAT > + > Chain: srcnat > action > action: masquerde> apply
+
+Termanil: ping google.com
+
+
+Control panel > Ethernet > Properties > Internet Protocol version 4(TCP/IPv4) > Use the following IP address >
+
+        IP address: 10.10.10.11
+        Subnet mask: 255.255.255.0
+        Default gateway: 10.10.10.1
+        
+        Preferred DNS server: 8.8.8.8
+        Alternate DNS server: 8.8.4.4
+
+Run > ping 8.8.8.8 -t > ok
+
+
+Bandwidth:
+>Queues > + > General > Name > Target: 192.168.10.2(Check: PC>Ethernet>Details) > Max Limit Target Upload 10M > Max Limit Target Download 10M> Advanced > Limit at Target Upload 10M > Limit at Target Download 10M >apply
+
+after that Burst Limit 30M 30M > Burst Threshold 2M 2M > Brust Time: 180 180 > advanced > priyority:1 > apply
+
+time > 06:00:00 > 18:00:00 > apply (day) : (Night) 18:00:00 > 06:00:00
+
+Another method
+Queues > Queue Types > + > Type name: 1MB Upload/1MB Download > Kind: pcq > Rate: 1M >apply      >>Queue type: change > apply
+
+
+
+If ARP:Replay only> IP > ARP List> + > IP Address:... > Mac Address:... > Interface:... > apply
+
+
+DHCP server
+
+Queues > + > General > Name: ,target: 192.168.13.0/24 > Max limit upload/download: 50M > Apply
+
+IP > Hotspot > Servers > Hotspot Setup > ....DHCP server > all Next > DNS name:enlightenimtiaz.com >Next > Ok
+
+User profile > + > Name: > Address pool: dhcp_pool() > apply     /Shared user (1-.....)
+
+User> + > Server > hotspot1 > Name: > password > profile: select specific profile > apply
+
+google> enlightenimtiaz.com > user: pass: > login
+
+
+Show users:
+
+IP > Hotspot > Hosts
+
+Website Block: 
+
+All Drop:= IP > Firewall > Filter Rules + > General > Chain:forward > Protocol: tcp > Dst.Port: 80.443 > Action > drop > apply
+
+Allow 1 site: IP > Firewall > Filter Rules + > General > Chain:forward > Protocol: tcp > Dst.Port: 80.443 > Advanced >Dst.Address List:Allowed site > Action > accept > apply
+
+Address List: + > Name:Allowed site > Address: www.google.com > apply
+
+Specific website block:
+
+
+IP > Firewall > Layer7 Protocols > + > Name: facebook_block > Regexp: ^.+(facebook.com).*$ >Apply > OK
